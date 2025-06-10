@@ -16,6 +16,12 @@ app.get('/', (req,res) => {
     res.send('hello')
 });
 
+const userRoute = require('./routes/userRoute');
+app.use('/', userRoute);
+
+const adminRoute = require('./routes/adminRoute');
+app.use('/', adminRoute);
+
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
