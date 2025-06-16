@@ -9,15 +9,13 @@ router.post('/login', async (req,res) => {
     const {username, password} = (req.body);
     try {
         if(username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD){
-            const token = jwt.sign(
-                {username: process.env.ADMIN_USERNAME},
-                process.env.JWT_SECRET,
-                {expiresIn: '1h'}
-            );
+            const token = jwt.sign( {username: process.env.ADMIN_USERNAME}, process.env.JWT_SECRET, { expiresIn: '1h' });
+            return res.status(200).json({message: 'Login successful', token});
+        } else {
+            return res.status(401).json({message: 'Invalid credentials'});
         }
-        return res.status(200).json({token})
     } catch (error) {
-        return res.status(500).json({message: 'Invalid credentials', error: error.message})
+        return res.status(500).json({message: 'Something went wrong', error: error.message})
     }
 });
 
@@ -44,5 +42,27 @@ router.get('/user/:id', async (req,res) => {
     }
 });
 
+
+router.put('/user/:id', async (req,res) => {
+    try {
+        const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {new: true});
+        return res.status(200).json({message: 'User updated successfully', updatedUser}); 
+    } catch (error) {
+        return res.status(500).json({message: 'Something went wrong', error: error.message});
+    }
+});
+
+
+router.delete('/user/:id', async (req,res) => {
+    try {
+        const deletedUser = await User.findByIdAndDelete(req.params.id);
+        if(!deletedUser){
+            return res.status(404).json({message: 'User not found'});
+        }
+        return res.status(200).json({message: 'User deleted successfully'});
+    } catch (error) {
+        return res.status(500).json({message: 'Something went wrong', error: error.message});
+    }
+});
 
 module.exports = router;

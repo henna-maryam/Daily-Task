@@ -1,12 +1,14 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 dotenv.config()
 
 const app = express();
 
 app.use(express.json());
+app.use(cors({origin: '*'}))
 
 mongoose.connect(process.env.MONGO_URL)
     .then(() => {console.log('MONGO connected');})
@@ -20,7 +22,7 @@ const userRoute = require('./routes/userRoute');
 app.use('/', userRoute);
 
 const adminRoute = require('./routes/adminRoute');
-app.use('/', adminRoute);
+app.use('/admin', adminRoute);
 
 
 const PORT = process.env.PORT;
